@@ -16,6 +16,9 @@ class DeploymentResourceTest {
     @Autowired
     private lateinit var deploymentResource: DeploymentResource
 
+    @Autowired
+    private lateinit var deploymentRepository: DeploymentRepository
+
     @Test
     fun `should deploy and return correct system version number`() {
         var systemVersionNumber = deploymentResource.deploy(DeploymentDto("Service A", 1))
@@ -36,6 +39,7 @@ class DeploymentResourceTest {
 
     @Test
     fun `should return correct services for system version`() {
+        clearDeploymentDatabase()
         val deployment1 = DeploymentDto("Service A", 1)
         val deployment2 = DeploymentDto("Service B", 1)
         val deployment3 = DeploymentDto("Service A", 2)
@@ -57,5 +61,17 @@ class DeploymentResourceTest {
         services = deploymentResource.getServices(3)
         assertThat(services).hasSize(2)
         assertThat(services).containsExactlyInAnyOrder(deployment3, deployment4)
+    }
+
+    @Test
+    fun `should return no services if there is no deployment`() {
+        clearDeploymentDatabase()
+        val services = deploymentResource.getServices(1)
+        assertThat(services).isEmpty()
+    }
+
+    private fun clearDeploymentDatabase() {
+        deploymentRepository.deleteAll()
+        assertThat(deploymentRepository.findAll()).isEmpty()
     }
 }
