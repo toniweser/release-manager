@@ -1,0 +1,22 @@
+version: '2.2'
+services:
+  db:
+    init: true
+    image: mysql:8.0.31
+#    image: mysql:5.7
+    container_name: "release_manager_mysql"
+    user: $CURRENT_UID
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_USER: release_manager
+      MYSQL_PASSWORD: release_manager
+      MYSQL_DATABASE: release_manager
+    command: [ "--user=root", '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--max_allowed_packet=1024M' ]
+    volumes:
+      - "./local/mysql/data:/var/lib/mysql/"
+    healthcheck:
+      test: ["CMD", 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-padmin123' ]
+      timeout: 20s
+      retries: 10

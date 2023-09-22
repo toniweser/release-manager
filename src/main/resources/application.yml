@@ -1,0 +1,45 @@
+server:
+  port: ${SERVER_PORT:8181}
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/release_manager?allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${DB_USER:release_manager}
+    password: ${DB_PASSWORD:release_manager}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop #validate #validate #create-drop
+    open-in-view: false
+    show-sql: false
+  rabbitmq:
+    virtual-host: /
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 5s
+          multiplier: 2
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
+    username: ca
+    password:
+  jpa:
+    database: h2
