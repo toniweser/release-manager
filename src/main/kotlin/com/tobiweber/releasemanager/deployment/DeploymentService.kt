@@ -43,7 +43,7 @@ class DeploymentService(
         val services = deployments
             .groupBy { it.serviceName }
             .map { (_, deployments) ->
-                deployments.maxByOrNull { it.systemVersionNumber }!!
+                deployments.maxBy { it.systemVersionNumber }
             }
             .sortedBy { it.serviceName }
         return services.map { it.toDto() }
