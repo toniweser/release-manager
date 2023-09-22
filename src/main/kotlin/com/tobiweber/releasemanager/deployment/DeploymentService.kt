@@ -7,19 +7,11 @@ class DeploymentService(
     private val deploymentRepository: DeploymentRepository,
 ) {
     fun deploy(deploymentDto: DeploymentDto): Int {
-        // TODO: Optimize performance by calculating system version number on database level
-        val allDeployments = deploymentRepository.findAll()
-        val maxSystemVersionNumber =
-            if (allDeployments.isEmpty()) {
-                0
-            } else {
-                allDeployments.maxOf { it.systemVersionNumber }
-            }
-
-        val deploymentExists = allDeployments.any {
-            it.serviceName == deploymentDto.serviceName &&
-                it.serviceVersionNumber == deploymentDto.serviceVersionNumber
-        }
+        val maxSystemVersionNumber = deploymentRepository.findMaxSystemVersionNumber()
+        val deploymentExists = deploymentRepository.existsByServiceNameAndServiceVersionNumber(
+            deploymentDto.serviceName,
+            deploymentDto.serviceVersionNumber,
+        )
 
         val systemVersionNumber = if (deploymentExists) {
             maxSystemVersionNumber
