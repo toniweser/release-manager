@@ -45,7 +45,7 @@ class DeploymentService(
             .map { (_, deployments) ->
                 deployments.maxByOrNull { it.systemVersionNumber }!!
             }
-        // TODO: Handle sorting
+            .sortedBy { it.serviceName }
         return services.map { it.toDto() }
     }
 }

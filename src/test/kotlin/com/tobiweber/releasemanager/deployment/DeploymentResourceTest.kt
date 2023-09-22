@@ -70,6 +70,19 @@ class DeploymentResourceTest {
         assertThat(services).isEmpty()
     }
 
+    @Test
+    fun `should return services in correct order`() {
+        clearDeploymentDatabase()
+        val deployment1 = DeploymentDto("Service B", 1)
+        val deployment2 = DeploymentDto("Service A", 1)
+
+        deploymentResource.deploy(deployment1)
+        deploymentResource.deploy(deployment2)
+
+        val services = deploymentResource.getServices(2)
+        assertThat(services).containsExactly(deployment2, deployment1)
+    }
+
     private fun clearDeploymentDatabase() {
         deploymentRepository.deleteAll()
         assertThat(deploymentRepository.findAll()).isEmpty()

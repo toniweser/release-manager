@@ -23,7 +23,7 @@ class DeploymentResource(
         deploymentService.deploy(deploymentDto)
 
     /**
-     * Returns all latest services for the given system version.
+     * Returns all latest services for the given system version sorted by service name ASC.
      * @param systemVersion The system version number
      * @return The list of the latest services
      */
