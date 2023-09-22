@@ -18,19 +18,44 @@ class DeploymentResourceTest {
 
     @Test
     fun `should deploy and return correct system version number`() {
-        var systemVersionService = deploymentResource.deploy(DeploymentInputDto("Service A", 1))
-        assertThat(systemVersionService).isEqualTo(1)
+        var systemVersionNumber = deploymentResource.deploy(DeploymentDto("Service A", 1))
+        assertThat(systemVersionNumber).isEqualTo(1)
 
-        systemVersionService = deploymentResource.deploy(DeploymentInputDto("Service B", 1))
-        assertThat(systemVersionService).isEqualTo(2)
+        systemVersionNumber = deploymentResource.deploy(DeploymentDto("Service B", 1))
+        assertThat(systemVersionNumber).isEqualTo(2)
 
-        systemVersionService = deploymentResource.deploy(DeploymentInputDto("Service A", 2))
-        assertThat(systemVersionService).isEqualTo(3)
+        systemVersionNumber = deploymentResource.deploy(DeploymentDto("Service A", 2))
+        assertThat(systemVersionNumber).isEqualTo(3)
 
-        systemVersionService = deploymentResource.deploy(DeploymentInputDto("Service B", 1))
-        assertThat(systemVersionService).isEqualTo(3)
+        systemVersionNumber = deploymentResource.deploy(DeploymentDto("Service B", 1))
+        assertThat(systemVersionNumber).isEqualTo(3)
 
-        systemVersionService = deploymentResource.deploy(DeploymentInputDto("Service A", 1))
-        assertThat(systemVersionService).isEqualTo(3)
+        systemVersionNumber = deploymentResource.deploy(DeploymentDto("Service A", 1))
+        assertThat(systemVersionNumber).isEqualTo(3)
+    }
+
+    @Test
+    fun `should return correct services for system version`() {
+        val deployment1 = DeploymentDto("Service A", 1)
+        val deployment2 = DeploymentDto("Service B", 1)
+        val deployment3 = DeploymentDto("Service A", 2)
+        val deployment4 = DeploymentDto("Service B", 1)
+
+        deploymentResource.deploy(deployment1)
+        deploymentResource.deploy(deployment2)
+        deploymentResource.deploy(deployment3)
+        deploymentResource.deploy(deployment4)
+
+        var services = deploymentResource.getServices(1)
+        assertThat(services).hasSize(1)
+        assertThat(services.first()).isEqualTo(deployment1)
+
+        services = deploymentResource.getServices(2)
+        assertThat(services).hasSize(2)
+        assertThat(services).containsExactlyInAnyOrder(deployment1, deployment2)
+
+        services = deploymentResource.getServices(3)
+        assertThat(services).hasSize(2)
+        assertThat(services).containsExactlyInAnyOrder(deployment3, deployment4)
     }
 }

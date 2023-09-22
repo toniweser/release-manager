@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 class DeploymentService(
     private val deploymentRepository: DeploymentRepository,
 ) {
-    fun deploy(deploymentInputDto: DeploymentInputDto): Int {
+    fun deploy(deploymentDto: DeploymentDto): Int {
         // TODO: Optimize performance by calculating system version number on database level
         val allDeployments = deploymentRepository.findAll()
         val maxSystemVersionNumber =
@@ -17,8 +17,8 @@ class DeploymentService(
             }
 
         val deploymentExists = allDeployments.any {
-            it.serviceName == deploymentInputDto.serviceName &&
-                it.serviceVersionNumber == deploymentInputDto.serviceVersionNumber
+            it.serviceName == deploymentDto.serviceName &&
+                it.serviceVersionNumber == deploymentDto.serviceVersionNumber
         }
 
         val systemVersionNumber = if (deploymentExists) {
@@ -28,12 +28,24 @@ class DeploymentService(
         }
 
         val deploymentEntity = DeploymentEntity(
-            serviceName = deploymentInputDto.serviceName,
-            serviceVersionNumber = deploymentInputDto.serviceVersionNumber,
+            serviceName = deploymentDto.serviceName,
+            serviceVersionNumber = deploymentDto.serviceVersionNumber,
             systemVersionNumber = systemVersionNumber,
         )
 
         deploymentRepository.save(deploymentEntity)
         return systemVersionNumber
+    }
+
+    fun getServices(systemVersion: Int): List<DeploymentDto> {
+        val deployments = deploymentRepository.findBySystemVersionNumberLessThanEqual(systemVersion)
+        // Filter for latest deployment for each service
+        val services = deployments
+            .groupBy { it.serviceName }
+            .map { (_, deployments) ->
+                deployments.maxByOrNull { it.systemVersionNumber }!!
+            }
+        // TODO: Handle sorting
+        return services.map { it.toDto() }
     }
 }
