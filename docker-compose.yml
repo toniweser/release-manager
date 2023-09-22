@@ -3,7 +3,6 @@ services:
   db:
     init: true
     image: mysql:8.0.31
-#    image: mysql:5.7
     container_name: "release_manager_mysql"
     user: $CURRENT_UID
     ports:
