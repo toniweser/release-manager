@@ -1,4 +1,17 @@
-# Release Manager
+# Release Manager - Job interview case study
+
+The project is a Spring Boot backend application that was developed as part of a coding challenge for a job interview as
+a freelance developer.
+
+Spoiler: I got the job 😍!
+
+Requirements:
+
+- Time available: 3h
+- Spring Boot
+- Kotlin
+
+You can find the complete task description in the [requirements.md](requirements.md) file.
 
 ## Prerequisites
 
